@@ -37,18 +37,13 @@ function main() {
       } else if (answer === "add a role") {
         addRoles();
       } else if (answer === "update existing employee role") {
-        updateEmployee();
+        updateEmployeeRole();
       } else if (answer === "main view") {
         main();
       } else {
         console.log("error, please enter a valid entry.");
       }
     });
-}
-
-// to exit back into main view
-function exit() {
-  main();
 }
 
 function viewDepartments() {
@@ -196,8 +191,36 @@ function addEmployee() {
   });
 }
 
-function updateEmployee () {
-
+function updateEmployeeRole() {
+  const data = `SELECT * FROM employees`;
+  connect.query(data, (err, employee_result) => {
+    connect.query(`SELECT * FROM roles`, (err, title_result) => {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "employee",
+            message: "Which employee would you like to update?",
+            choices: () =>
+              employee_result.map(
+                (employee_result) =>
+                  employee_result.first_name + " " + employee_result.last_name,
+              ),
+          },
+          {
+            type: "list",
+            name: "employeeRole",
+            message: "Which role do you want to assign the selected employee?",
+            choices: () =>
+              title_result.map((title_result) => title_result),
+          },
+        ])
+        .then((answer) => {
+            console.log('works')
+        });
+      main();
+    });
+  });
 }
 
 main();
